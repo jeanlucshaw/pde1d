@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def time_step_euler(initial, time, system):
     """
     Step `system` through `time` from `initial` conditions.

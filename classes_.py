@@ -45,6 +45,10 @@ class ImplicitSystem:
 
             T_j = T_{j-1} + dx Q
 
+        It is important to note that this flux boundary implementation
+        puts the boundray between the two last grid points. The last
+        grid point is therefore outside the physical domain.
+
         """
         self.coefs = coefficients.copy()
         if isinstance(boundary_0, tuple):
@@ -198,6 +202,10 @@ class ExplicitSystem:
         ..math::
 
             T_j = T_{j-1} + dx Q
+
+        It is important to note that this flux boundary implementation
+        puts the boundray between the two last grid points. The last
+        grid point is therefore outside the physical domain.
 
         """
         self.coefs = coefficients.copy()
