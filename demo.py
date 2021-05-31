@@ -1,6 +1,14 @@
-import mxtoolbox.plot as pt
+"""
+This demo shows workflow and limits of solving PDES with the
+Euler scheme. Try larger time steps with implicit and explicit
+solution schemes.
+"""
+import matplotlib.pyplot as plt
 import numpy as np
 import pde1d as pde
+
+# Switch between implicit and explicit
+explicit = True
 
 # Init space domain
 dx = 1
@@ -20,14 +28,20 @@ u0[40:60] = 1
 k = 0.1 * np.ones_like(x)
 
 # Define system of equations
-coefs = pde.coefs_diffusion(x, time, k, implicit=False)
+if explicit:
+    coefs = pde.coefs_diffusion(x, time, k, implicit=False)
+else:
+    coefs = pde.coefs_diffusion(x, time, k, implicit=True)
 
 # Define the boundary conditions as zero flux
 boundary_0 = 0, dx
 boundary_j = 0, dx
 
 # Instanciate the problem to solve
-system = pde.ExplicitSystem(coefs, boundary_0, boundary_j)
+if explicit:
+    system = pde.ExplicitSystem(coefs, boundary_0, boundary_j)
+else:
+    system = pde.ImplicitSystem(coefs, boundary_0, boundary_j)
 
 # Time step the solution using the Euler explicit algorithm
 solution = pde.time_step_euler(u0, time, system)
