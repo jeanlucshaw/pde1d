@@ -1,3 +1,4 @@
+
 import numpy as np
 from scipy.linalg import solve, solve_banded
 from .functions_ import *
@@ -51,14 +52,21 @@ class ImplicitSystem:
 
         """
         self.coefs = coefficients.copy()
+        # Set boundary information at x = 0
         if isinstance(boundary_0, tuple):
             self.q0, self.dx = boundary_0
             self.boundary_0 = boundary_0
+        else:
+            self.boundary_0 = boundary_0
+
+        # Set boundary information at x = j
+        if isinstance(boundary_j, tuple):
             self.qj, self.dx = boundary_j
             self.boundary_j = boundary_j
         else:
-            self.boundary_0 = boundary_0
             self.boundary_j = boundary_j
+
+        # Determine if coefs is full or banded
         if self.coefs.shape[0] == self.coefs.shape[1]:
             self.banded_coefficients = False
             self.coefs_a_2 = self.coefs[1, 0]
@@ -124,15 +132,23 @@ class ImplicitSystem:
 
         """
         rhs = rhs.copy()
+        # Manage boundary at x = 0
         if isinstance(self.boundary_0, (int, float)):
             rhs[0] = self.boundary_0
-            rhs[-1] = self.boundary_j
         elif isinstance(self.boundary_0, np.ndarray):
             rhs[0] = self.boundary_0[index]
-            rhs[-1] = self.boundary_j[index]
         elif isinstance(self.boundary_0, tuple):
             rhs[0] = rhs[1] + self.dx * self.q0
+
+        # Manage boundary at x = j
+        if isinstance(self.boundary_j, (int, float)):
+            rhs[-1] = self.boundary_j
+        elif isinstance(self.boundary_j, np.ndarray):
+            rhs[-1] = self.boundary_j[index]
+        elif isinstance(self.boundary_j, tuple):
             rhs[-1] = rhs[-2] + self.dx * self.qj
+
+        # Prepare matrix for solution
         rhs[1] -= self.coefs_a_2 * rhs[0]
         rhs[-2] -= self.coefs_c_m1 * rhs[-1]
 
@@ -209,14 +225,21 @@ class ExplicitSystem:
 
         """
         self.coefs = coefficients.copy()
+        # Set boundary information at x = 0
         if isinstance(boundary_0, tuple):
             self.q0, self.dx = boundary_0
             self.boundary_0 = boundary_0
+        else:
+            self.boundary_0 = boundary_0
+
+        # Set boundary information at x = j
+        if isinstance(boundary_j, tuple):
             self.qj, self.dx = boundary_j
             self.boundary_j = boundary_j
         else:
-            self.boundary_0 = boundary_0
             self.boundary_j = boundary_j
+
+        # Determine if coefs is full or banded
         if self.coefs.shape[0] == self.coefs.shape[1]:
             self.banded_coefficients = False
         else:
@@ -240,14 +263,20 @@ class ExplicitSystem:
 
         """
         next_step = next_step.copy()
+        # Manage boundary conditions at x = 0
         if isinstance(self.boundary_0, (int, float)):
             next_step[0] = self.boundary_0
-            next_step[-1] = self.boundary_j
         elif isinstance(self.boundary_0, np.ndarray):
             next_step[0] = self.boundary_0[index]
-            next_step[-1] = self.boundary_j[index]
         elif isinstance(self.boundary_0, tuple):
             next_step[0] = next_step[1] + self.dx * self.q0
+
+        # Manage boundary conditions at x = j
+        if isinstance(self.boundary_j, (int, float)):
+            next_step[-1] = self.boundary_j
+        elif isinstance(self.boundary_j, np.ndarray):
+            next_step[-1] = self.boundary_j[index]
+        elif isinstance(self.boundary_j, tuple):
             next_step[-1] = next_step[-2] + self.dx * self.qj
 
         return next_step

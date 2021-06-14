@@ -1,7 +1,7 @@
 """
+This validation tests for different boundary conditions at x=0 and j
 """
 import matplotlib.pyplot as plt
-import mxtoolbox.plot as pt
 import numpy as np
 import pde1d as pde
 
@@ -13,7 +13,7 @@ dx = 1
 x = np.arange(0, 100, dx)
 
 # Init time domain
-dt = 10                          # try 5 and 10 seconds (unstable)
+dt = 60                          # try 5 and 10 seconds (unstable)
 start_time = np.datetime64("2021-01-01T00:00:00")
 stop_time = np.datetime64("2021-01-01T20:00:00")
 time = np.arange(start_time, stop_time, np.timedelta64(dt, 's'))
@@ -47,8 +47,8 @@ solution = pde.time_step_euler(u0, time, system)
 ax = pde.plot_solution(x, time, solution)
 
 # The exact solution to this situation
-t_f = (stop_time - start_time).item().total_seconds() / 1  # Divide by 2 or 10 for comparison
-exact = np.exp(-k[0] * t_f * np.pi**2 / x.max() ** 2) * np.cos(x * np.pi / x.max())
-ax[0].plot(exact, x, 'g--', lw=2)
+# t_f = (stop_time - start_time).item().total_seconds() / 1  # Divide by 2 or 10 for comparison
+# exact = np.exp(-k[0] * t_f * np.pi**2 / x.max() ** 2) * np.cos(x * np.pi / x.max())
+# ax[0].plot(exact, x, 'g--', lw=2)
 
 plt.show()
